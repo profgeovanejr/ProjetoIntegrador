@@ -35,43 +35,25 @@ const pedidoController = require('./controllers/pedidoController');
 // ============================================
 // ROTAS DE PRODUTOS
 // ============================================
-
-// POST /produtos - Criar produto
-app.post('/produtos', produtoController.create);
-
-// GET /produtos - Listar produtos
-app.get('/produtos', produtoController.list);
-
-// GET /produtos/:id - Detalhar produto
-app.get('/produtos/:id', produtoController.findById);
-
-// PUT /produtos/:id - Atualizar produto completo
-app.put('/produtos/:id', produtoController.update);
-
-// PATCH /produtos/:id/active - Ativar/desativar produto
-app.patch('/produtos/:id/active', produtoController.updateActive);
-
-// PATCH /produtos/:id/stock - Ajustar estoque
-app.patch('/produtos/:id/stock', produtoController.updateStock);
-
-// DELETE /produtos/:id - Deletar produto
-app.delete('/produtos/:id', produtoController.remove);
+// ✅ Usar o arquivo de rotas
+const produtoRoutes = require('./routes/produtoRoutes');
+app.use('/produtos', produtoRoutes);
 
 // ============================================
 // ROTAS DE PEDIDOS
 // ============================================
 
 // POST /pedidos - Criar pedido
-app.post('/pedidos', pedidoController.create);
+app.post('/pedidos', pedidoController.criaPedido);
 
-// GET /pedidos - Listar pedidos
-app.get('/pedidos', pedidoController.list);
+// GET /pedidos - listaProdutoar pedidos
+app.get('/pedidos', pedidoController.listaPedido);
 
 // GET /pedidos/:id - Detalhar pedido
-app.get('/pedidos/:id', pedidoController.findById);
+app.get('/pedidos/:id', pedidoController.buscaPorId);
 
 // PATCH /pedidos/:id/status - Alterar status do pedido
-app.patch('/pedidos/:id/status', pedidoController.updateStatus);
+app.patch('/pedidos/:id/status', pedidoController.atualizaPedidoStatus);
 
 // ============================================
 // ROTAS DE SAÚDE

@@ -16,12 +16,12 @@
  * Body esperado:
  * {
  *   "items": [
- *     { "productId": 1, "quantity": 2 },
- *     { "productId": 3, "quantity": 1 }
+ *     { "produtoId": 1, "quantity": 2 },
+ *     { "produtoId": 3, "quantity": 1 }
  *   ]
  * }
  */
-exports.create = (req, res) => {
+exports.criaPedido = (req, res) => {
   try {
     const { items } = req.body;
     // Em produção, viria do middleware de autenticação
@@ -51,8 +51,8 @@ exports.create = (req, res) => {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
 
-      if (!item.productId) {
-        errors.push(`Item ${i + 1}: productId é obrigatório`);
+      if (!item.produtoId) {
+        errors.push(`Item ${i + 1}: produtoId é obrigatório`);
       }
 
       if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
@@ -74,18 +74,18 @@ exports.create = (req, res) => {
 
     // Simular verificação de estoque
     const stockCheck = [
-      { productId: 1, available: 10 },
-      { productId: 2, available: 5 },
-      { productId: 3, available: 0 }
+      { produtoId: 1, available: 10 },
+      { produtoId: 2, available: 5 },
+      { produtoId: 3, available: 0 }
     ];
 
     for (let item of items) {
-      const stock = stockCheck.find(s => s.productId === item.productId);
+      const stock = stockCheck.find(s => s.produtoId === item.produtoId);
 
       if (!stock) {
         return res.status(404).json({
           message: 'Produto não encontrado',
-          productId: item.productId
+          produtoId: item.produtoId
         });
       }
 
@@ -93,7 +93,7 @@ exports.create = (req, res) => {
         // Status 409: Conflict (conflito de negócio)
         return res.status(409).json({
           message: 'Estoque insuficiente',
-          productId: item.productId,
+          produtoId: item.produtoId,
           requested: item.quantity,
           available: stock.available
         });
@@ -104,7 +104,7 @@ exports.create = (req, res) => {
     // CALCULAR TOTAL (simulado)
     // ============================================
 
-    const products = [
+    const produtos = [
       { id: 1, price: 2500.00 },
       { id: 2, price: 50.00 },
       { id: 3, price: 150.00 }
@@ -112,12 +112,12 @@ exports.create = (req, res) => {
 
     let total = 0;
     const itensPedido = items.map(item => {
-      const product = products.find(p => p.id === item.productId);
+      const product = produtos.find(p => p.id === item.produtoId);
       const subtotal = product.price * item.quantity;
       total += subtotal;
 
       return {
-        productId: item.productId,
+        produtoId: item.produtoId,
         quantity: item.quantity,
         unitPrice: product.price,
         subtotal
@@ -134,8 +134,8 @@ exports.create = (req, res) => {
       items: itensPedido,
       status: 'CREATED',
       total,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      data_criacao: new Date().toISOString(),
+      data_atualizacao: new Date().toISOString()
     };
 
     // ============================================
@@ -144,7 +144,7 @@ exports.create = (req, res) => {
 
     return res.status(201).json({
       message: 'Pedido criado com sucesso',
-      order: novoPedido
+      pedido: novoPedido
 
     });
 
@@ -170,7 +170,7 @@ exports.create = (req, res) => {
  * - page=1
  * - limit=20
  */
-exports.list = (req, res) => {
+exports.listaPedido = (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
     // Em produção, viria do middleware de autenticação
@@ -184,21 +184,21 @@ exports.list = (req, res) => {
         userId: 1,
         status: 'CREATED',
         total: 2550.00,
-        createdAt: new Date().toISOString()
+        data_criacao: new Date().toISOString()
       },
       {
         id: 2,
         userId: 1,
         status: 'PAID',
         total: 5100.00,
-        createdAt: new Date().toISOString()
+        data_criacao: new Date().toISOString()
       },
       {
         id: 3,
         userId: 2,
         status: 'SHIPPED',
         total: 150.00,
-        createdAt: new Date().toISOString()
+        data_criacao: new Date().toISOString()
       }
     ];
 
@@ -275,7 +275,7 @@ exports.list = (req, res) => {
  * - CUSTOMER: só vê se for dono
  * - ADMIN: vê qualquer um
  */
-exports.findById = (req, res) => {
+exports.buscaPorId = (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id || 1;
@@ -289,12 +289,12 @@ exports.findById = (req, res) => {
     }
 
     // Simular busca
-    const order = {
+    const pedido = {
       id: parseInt(id),
       userId: 1,
       items: [
         {
-          productId: 1,
+          produtoId: 1,
           quantity: 1,
           unitPrice: 2500.00,
           subtotal: 2500.00
@@ -302,8 +302,8 @@ exports.findById = (req, res) => {
       ],
       status: 'CREATED',
       total: 2500.00,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      data_criacao: new Date().toISOString(),
+      data_atualizacao: new Date().toISOString()
     };
 
     // Simular pedido não encontrado
@@ -317,7 +317,7 @@ exports.findById = (req, res) => {
     // VERIFICAR PERMISSÃO
     // ============================================
 
-    if (userRole === 'CUSTOMER' && order.userId !== userId) {
+    if (userRole === 'CUSTOMER' && pedido.userId !== userId) {
       // Status 403: Forbidden (sem permissão)
       return res.status(403).json({
         message: 'Você não tem permissão para ver este pedido'
@@ -330,7 +330,7 @@ exports.findById = (req, res) => {
 
     return res.status(200).json({
       message: 'Pedido encontrado',
-      order
+      pedido
     });
 
   } catch (error) {
@@ -356,7 +356,7 @@ exports.findById = (req, res) => {
  * - ADMIN: pode alterar para qualquer status válido
  * - CUSTOMER: só pode cancelar se status for CREATED
  */
-exports.updateStatus = (req, res) => {
+exports.atualizaPedidoStatus = (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -381,7 +381,7 @@ exports.updateStatus = (req, res) => {
     }
 
     // Simular busca do pedido
-    const order = {
+    const pedido = {
       id: parseInt(id),
       userId: 1,
       status: 'CREATED',
@@ -408,10 +408,10 @@ exports.updateStatus = (req, res) => {
       }
 
       // CUSTOMER só pode cancelar se status for CREATED
-      if (order.status !== 'CREATED') {
+      if (pedido.status !== 'CREATED') {
         return res.status(409).json({
           message: 'Só é possível cancelar pedidos em status CREATED',
-          currentStatus: order.status
+          currentStatus: pedido.status
         });
       }
     }
@@ -421,7 +421,7 @@ exports.updateStatus = (req, res) => {
     // ============================================
 
     // Não permitir alterar pedido CANCELED
-    if (order.status === 'CANCELED') {
+    if (pedido.status === 'CANCELED') {
       return res.status(409).json({
         message: 'Não é possível alterar pedido cancelado'
       });
@@ -436,11 +436,11 @@ exports.updateStatus = (req, res) => {
         'CANCELED': []
       };
 
-      const allowed = validTransitions[order.status];
+      const allowed = validTransitions[pedido.status];
       if (!allowed.includes(status)) {
         return res.status(409).json({
-          message: `Transição inválida de ${order.status} para ${status}`,
-          currentStatus: order.status,
+          message: `Transição inválida de ${pedido.status} para ${status}`,
+          currentStatus: pedido.status,
           validTransitions: allowed
         });
       }
@@ -453,7 +453,7 @@ exports.updateStatus = (req, res) => {
     const atualizaPedido = {
       id: parseInt(id),
       status,
-      updatedAt: new Date().toISOString()
+      data_atualizacao: new Date().toISOString()
     };
 
     // ============================================
@@ -462,7 +462,7 @@ exports.updateStatus = (req, res) => {
 
     return res.status(200).json({
       message: 'Status do pedido atualizado com sucesso',
-      order: atualizaPedido
+      pedido: atualizaPedido
     });
 
   } catch (error) {

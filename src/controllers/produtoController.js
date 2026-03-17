@@ -15,29 +15,29 @@
  * 
  * Body esperado:
  * {
- *   "name": "Notebook",
- *   "price": 2500.00,
- *   "stock": 10,
- *   "description": "Notebook para desenvolvimento" (opcional)
+ *   "nome": "Notebook",
+ *   "valor_unitario": 2500.00,
+ *   "quantidade_estoque": 10,
+ *   "descricao": "Notebook para desenvolvimento" (opcional)
  * }
  */
-exports.create = (req, res) => {
+exports.criaProduto = (req, res) => {
   try {
-    const { name, price, stock, description } = req.body;
+    const { nome, valor_unitario, quantidade_estoque, descricao } = req.body;
     
     // ============================================
     // VALIDAÇÕES
     // ============================================
     
     // Validar nome
-    if (!name || !name.trim()) {
+    if (!nome || !nome.trim()) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Nome do produto é obrigatório']
       });
     }
     
-    if (name.trim().length < 3) {
+    if (nome.trim().length < 3) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Nome deve ter pelo menos 3 caracteres']
@@ -45,14 +45,14 @@ exports.create = (req, res) => {
     }
     
     // Validar preço
-    if (price === undefined || price === null) {
+    if (valor_unitario === undefined || valor_unitario === null) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Preço é obrigatório']
       });
     }
     
-    if (typeof price !== 'number' || price <= 0) {
+    if (typeof valor_unitario !== 'number' || valor_unitario <= 0) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Preço deve ser um número maior que 0']
@@ -60,14 +60,14 @@ exports.create = (req, res) => {
     }
     
     // Validar estoque
-    if (stock === undefined || stock === null) {
+    if (quantidade_estoque === undefined || quantidade_estoque === null) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Estoque é obrigatório']
       });
     }
     
-    if (!Number.isInteger(stock) || stock < 0) {
+    if (!Number.isInteger(quantidade_estoque) || quantidade_estoque < 0) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Estoque deve ser um número inteiro não-negativo']
@@ -78,15 +78,15 @@ exports.create = (req, res) => {
     // CRIAR PRODUTO (simulado, sem banco)
     // ============================================
     
-    const criarProduto = {
+    const novoProduto = {
       id: Math.floor(Math.random() * 100000),
-      name: name.trim(),
-      price,
-      stock,
-      description: description || null,
-      active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      nome: nome.trim(),
+      valor_unitario,
+      quantidade_estoque,
+      descricao: descricao || null,
+      ativo: true,
+      data_criacao: new Date().toISOString(),
+      data_atualizacao: new Date().toISOString()
     };
     
     // ============================================
@@ -95,7 +95,7 @@ exports.create = (req, res) => {
     
     return res.status(201).json({
       message: 'Produto criado com sucesso',
-      product: criarProduto
+      produto: novoProduto
     });
     
   } catch (error) {
@@ -112,46 +112,46 @@ exports.create = (req, res) => {
  * Listar todos os produtos
  * 
  * Query parameters (opcionais):
- * - active=true|false
+ * - ativo=true|false
  * - page=1
  * - limit=20
  */
-exports.list = (req, res) => {
+exports.listaProduto = (req, res) => {
   try {
-    const { active, page = 1, limit = 20 } = req.query;
+    const { ativo, page = 1, limit = 20 } = req.query;
     
     // Simular lista de produtos
     let produtos = [
       {
         id: 1,
-        name: 'Notebook Dell',
-        price: 2500.00,
-        stock: 10,
-        active: true,
-        createdAt: new Date().toISOString()
+        nome: 'Notebook Dell',
+        valor_unitario: 2500.00,
+        quantidade_estoque: 10,
+        ativo: true,
+        data_criacao: new Date().toISOString()
       },
       {
         id: 2,
-        name: 'Mouse Logitech',
-        price: 50.00,
-        stock: 100,
-        active: true,
-        createdAt: new Date().toISOString()
+        nome: 'Mouse Logitech',
+        valor_unitario: 50.00,
+        quantidade_estoque: 100,
+        ativo: true,
+        data_criacao: new Date().toISOString()
       },
       {
         id: 3,
-        name: 'Teclado Mecânico',
-        price: 150.00,
-        stock: 0,
-        active: false,
-        createdAt: new Date().toISOString()
+        nome: 'Teclado Mecânico',
+        valor_unitario: 150.00,
+        quantidade_estoque: 0,
+        ativo: false,
+        data_criacao: new Date().toISOString()
       }
     ];
     
-    // Filtrar por active se fornecido
-    if (active !== undefined) {
-      const isActive = active === 'true';
-      produtos = produtos.filter(p => p.active === isActive);
+    // Filtrar por ativo se fornecido
+    if (ativo !== undefined) {
+      const isativo = ativo === 'true';
+      produtos = produtos.filter(p => p.ativo === isativo);
     }
     
     // Aplicar paginação
@@ -189,7 +189,7 @@ exports.list = (req, res) => {
  * GET /produtos/:id
  * Detalhar um produto específico
  */
-exports.findById = (req, res) => {
+exports.buscaPorId = (req, res) => {
   try {
     const { id } = req.params;
     
@@ -201,15 +201,15 @@ exports.findById = (req, res) => {
     }
     
     // Simular busca
-    const product = {
+    const produto = {
       id: parseInt(id),
-      name: 'Notebook Dell',
-      price: 2500.00,
-      stock: 10,
-      description: 'Notebook para desenvolvimento',
-      active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      nome: 'Notebook Dell',
+      valor_unitario: 2500.00,
+      quantidade_estoque: 10,
+      descricao: 'Notebook para desenvolvimento',
+      ativo: true,
+      data_criacao: new Date().toISOString(),
+      data_atualizacao: new Date().toISOString()
     };
     
     // Simular produto não encontrado
@@ -225,7 +225,7 @@ exports.findById = (req, res) => {
     
     return res.status(200).json({
       message: 'Produto encontrado',
-      product
+      produto
     });
     
   } catch (error) {
@@ -243,16 +243,16 @@ exports.findById = (req, res) => {
  * 
  * Body esperado (todos os campos obrigatórios):
  * {
- *   "name": "Novo nome",
- *   "price": 3000.00,
- *   "stock": 20,
- *   "description": "Nova descrição"
+ *   "nome": "Novo nome",
+ *   "valor_unitario": 3000.00,
+ *   "quantidade_estoque": 20,
+ *   "descricao": "Nova descrição"
  * }
  */
-exports.update = (req, res) => {
+exports.atualizaProduto = (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, stock, description } = req.body;
+    const { nome, valor_unitario, quantidade_estoque, descricao } = req.body;
     
     // Validar ID
     if (!id || isNaN(id)) {
@@ -267,15 +267,15 @@ exports.update = (req, res) => {
     
     const errors = [];
     
-    if (!name || !name.trim()) {
+    if (!nome || !nome.trim()) {
       errors.push('Nome do produto é obrigatório');
     }
     
-    if (!price || typeof price !== 'number' || price <= 0) {
+    if (!valor_unitario || typeof valor_unitario !== 'number' || valor_unitario <= 0) {
       errors.push('Preço deve ser um número maior que 0');
     }
     
-    if (stock === undefined || !Number.isInteger(stock) || stock < 0) {
+    if (quantidade_estoque === undefined || !Number.isInteger(quantidade_estoque) || quantidade_estoque < 0) {
       errors.push('Estoque deve ser um número inteiro não-negativo');
     }
     
@@ -297,15 +297,15 @@ exports.update = (req, res) => {
     // ATUALIZAR PRODUTO (simulado)
     // ============================================
     
-    const updatedProduct = {
+    const produtoAtualizado = {
       id: parseInt(id),
-      name: name.trim(),
-      price,
-      stock,
-      description: description || null,
-      active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      nome: nome.trim(),
+      valor_unitario,
+      quantidade_estoque,
+      descricao: descricao || null,
+      ativo: true,
+      data_criacao: new Date().toISOString(),
+      data_atualizacao: new Date().toISOString()
     };
     
     // ============================================
@@ -314,7 +314,7 @@ exports.update = (req, res) => {
     
     return res.status(200).json({
       message: 'Produto atualizado com sucesso',
-      product: updatedProduct
+      produto: produtoAtualizado
     });
     
   } catch (error) {
@@ -327,18 +327,18 @@ exports.update = (req, res) => {
 };
 
 /**
- * PATCH /produtos/:id/active
+ * PATCH /produtos/:id/ativo
  * Ativar ou desativar um produto
  * 
  * Body esperado:
  * {
- *   "active": true ou false
+ *   "ativo": true ou false
  * }
  */
-exports.updateActive = (req, res) => {
+exports.atualizaStatus = (req, res) => {
   try {
     const { id } = req.params;
-    const { active } = req.body;
+    const { ativo } = req.body;
     
     // Validar ID
     if (!id || isNaN(id)) {
@@ -347,11 +347,11 @@ exports.updateActive = (req, res) => {
       });
     }
     
-    // Validar campo active
-    if (typeof active !== 'boolean') {
+    // Validar campo ativo
+    if (typeof ativo !== 'boolean') {
       return res.status(400).json({
         message: 'Validação falhou',
-        errors: ['Campo "active" deve ser true ou false']
+        errors: ['Campo "ativo" deve ser true ou false']
       });
     }
     
@@ -363,13 +363,13 @@ exports.updateActive = (req, res) => {
     }
     
     // ============================================
-    // ATUALIZAR APENAS O CAMPO active
+    // ATUALIZAR APENAS O CAMPO ativo
     // ============================================
     
-    const updatedProduct = {
+    const produtoAtualizado = {
       id: parseInt(id),
-      active,
-      updatedAt: new Date().toISOString()
+      ativo,
+      data_atualizacao: new Date().toISOString()
     };
     
     // ============================================
@@ -378,7 +378,7 @@ exports.updateActive = (req, res) => {
     
     return res.status(200).json({
       message: 'Status do produto atualizado com sucesso',
-      product: updatedProduct
+      produto: produtoAtualizado
     });
     
   } catch (error) {
@@ -391,18 +391,18 @@ exports.updateActive = (req, res) => {
 };
 
 /**
- * PATCH /produtos/:id/stock
+ * PATCH /produtos/:id/quantidade_estoque
  * Ajustar estoque de um produto
  * 
  * Body esperado:
  * {
- *   "quantity": 50
+ *   "quantidade_estoque": 50
  * }
  */
-exports.updateStock = (req, res) => {
+exports.atualizaEstoque = (req, res) => {
   try {
     const { id } = req.params;
-    const { quantity } = req.body;
+    const { quantidade_estoque } = req.body;
     
     // Validar ID
     if (!id || isNaN(id)) {
@@ -412,7 +412,7 @@ exports.updateStock = (req, res) => {
     }
     
     // Validar quantidade
-    if (quantity === undefined || !Number.isInteger(quantity) || quantity < 0) {
+    if (quantidade_estoque === undefined || !Number.isInteger(quantidade_estoque) || quantidade_estoque < 0) {
       return res.status(400).json({
         message: 'Validação falhou',
         errors: ['Quantidade deve ser um número inteiro não-negativo']
@@ -427,13 +427,13 @@ exports.updateStock = (req, res) => {
     }
     
     // ============================================
-    // ATUALIZAR APENAS O CAMPO stock
+    // ATUALIZAR APENAS O CAMPO quantidade_estoque
     // ============================================
     
-    const updatedProduct = {
+    const produtoAtualizado = {
       id: parseInt(id),
-      stock: quantity,
-      updatedAt: new Date().toISOString()
+      quantidade_estoque: quantidade_estoque,
+      data_atualizacao: new Date().toISOString()
     };
     
     // ============================================
@@ -442,7 +442,7 @@ exports.updateStock = (req, res) => {
     
     return res.status(200).json({
       message: 'Estoque atualizado com sucesso',
-      product: updatedProduct
+      produto: produtoAtualizado
     });
     
   } catch (error) {
@@ -458,7 +458,7 @@ exports.updateStock = (req, res) => {
  * DELETE /produtos/:id
  * Deletar um produto
  */
-exports.remove = (req, res) => {
+exports.excluiProduto = (req, res) => {
   try {
     const { id } = req.params;
     
