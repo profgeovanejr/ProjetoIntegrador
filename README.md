@@ -35,11 +35,9 @@ ecommerce-api/
 │   │   ├── produtoController.js # Lógica dos endpoints de produtos
 │   │   └── pedidoController.js  # Lógica dos endpoints de pedidos
 │   ├── routes/
-│   │   ├── product.routes.js    # Rotas de produtos
-│   │   └── pedido.routes.js     # Rotas de pedidos
+│   │   ├── produtoRoutes.js     # Rotas de produtos
+│   │   └── pedidoRoutes.js      # Rotas de pedidos
 │   └── app.js                   # Configuração Express + middlewares
-├── .env                         # Variáveis de ambiente (não commitar!)
-├── .env.example                 # Exemplo de variáveis necessárias
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -71,18 +69,7 @@ npm install
 ### 3. Configurar variáveis de ambiente
 
 ```bash
-cp .env.example .env
-```
-
-Edite o arquivo `.env` com suas credenciais:
-
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=sua_senha
-DB_NAME=ecommerce
-DB_PORT=3306
-PORT=3000
+TBD
 ```
 
 ### 4. Criar o banco de dados
@@ -90,18 +77,20 @@ PORT=3000
 Abra o terminal MySQL e execute:
 
 ```sql
-CREATE DATABASE ecommerce;
-USE ecommerce;
+CREATE DATABASE projetoIntegrador;
+USE projetoIntegrador;
 
-CREATE TABLE products (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  name        VARCHAR(120) NOT NULL,
-  description TEXT,
-  price       DECIMAL(10,2) NOT NULL CHECK (price > 0),
-  stock       INTEGER DEFAULT 0 CHECK (stock >= 0),
-  active      BOOLEAN DEFAULT true,
-  created_at  TIMESTAMP DEFAULT NOW(),
-  updated_at  TIMESTAMP DEFAULT NOW()
+CREATE TABLE produtos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(120) NOT NULL,
+  descricao TEXT,
+  valor_unitario DECIMAL(10,2) NOT NULL
+        CHECK (valor_unitario > 0),
+  quantidade_estoque INTEGER DEFAULT 0
+        CHECK (quantidade_estoque >= 0),
+  ativo BOOLEAN DEFAULT true,
+  data_criacao TIMESTAMP DEFAULT NOW(),
+  data_atualizacao TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -136,10 +125,10 @@ Acesse: `http://localhost:3000`
 | GET | `/produtos/:id` | Detalhar produto | ✅ |
 | PUT | `/produtos/:id` | Atualizar produto completo | ✅ |
 | PATCH | `/produtos/:id/ativo` | Ativar / desativar produto | ✅ |
-| PATCH | `/produtos/:id/stock` | Ajustar estoque | ✅ |
+| PATCH | `/produtos/:id/estoque` | Ajustar estoque | ✅ |
 | DELETE | `/produtos/:id` | Remover produto | ✅ |
 
-### Pedidos
+### Pedidos *(Aula TBD)*
 
 | Método | Rota | Descrição | Status |
 |--------|------|-----------|--------|
@@ -148,7 +137,7 @@ Acesse: `http://localhost:3000`
 | GET | `/pedidos/:id` | Detalhar pedido | ✅ |
 | PATCH | `/pedidos/:id/status` | Alterar status do pedido | ✅ |
 
-### Autenticação *(Aula 09)*
+### Autenticação *(Aula TBD)*
 
 | Método | Rota | Descrição | Status |
 |--------|------|-----------|--------|
@@ -198,7 +187,7 @@ GET /produtos?ativo=true&page=1&limit=10
 ### Ajustar estoque
 
 ```http
-PATCH /produtos/1/stock
+PATCH /produtos/1/estoque
 Content-Type: application/json
 
 {
@@ -230,21 +219,6 @@ Content-Type: application/json
 - [x] Aula 02 — Express + rotas + controllers
 - [x] Aula 03 — REST, status codes + Postman/Thunder Client
 - [x] Aula 04 — Conexão MySQL + modelagem inicial
-- [ ] Aula 05 — CRUD de produtos com banco de dados
-- [ ] Aula 06 — Relacionamentos + pedidos e itens
-- [ ] Aula 07 — Migrations e seeds
-- [ ] Aula 08 — Swagger / OpenAPI
-- [ ] Aula 09 — JWT + rotas protegidas
-- [ ] Aula 10 — Segurança + handler de erros + logs
-- [ ] Aula 11 — Deploy + variáveis de ambiente em produção
-
----
-
-## 👥 Equipe
-
-| Nome | RA |
-|------|----|
-|  |  |
 
 ---
 
