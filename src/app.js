@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 
 // Importar controllers
 const produtoController = require('./controllers/produtoController');
-const orderController = require('./controllers/pedidoController');
+const pedidoController = require('./controllers/pedidoController');
 
 // ============================================
 // ROTAS DE PRODUTOS
@@ -61,17 +61,17 @@ app.delete('/produtos/:id', produtoController.remove);
 // ROTAS DE PEDIDOS
 // ============================================
 
-// POST /orders - Criar pedido
-app.post('/orders', orderController.create);
+// POST /pedidos - Criar pedido
+app.post('/pedidos', pedidoController.create);
 
-// GET /orders - Listar pedidos
-app.get('/orders', orderController.list);
+// GET /pedidos - Listar pedidos
+app.get('/pedidos', pedidoController.list);
 
-// GET /orders/:id - Detalhar pedido
-app.get('/orders/:id', orderController.findById);
+// GET /pedidos/:id - Detalhar pedido
+app.get('/pedidos/:id', pedidoController.findById);
 
-// PATCH /orders/:id/status - Alterar status do pedido
-app.patch('/orders/:id/status', orderController.updateStatus);
+// PATCH /pedidos/:id/status - Alterar status do pedido
+app.patch('/pedidos/:id/status', pedidoController.updateStatus);
 
 // ============================================
 // ROTAS DE SAÚDE
@@ -123,7 +123,7 @@ module.exports = app;
  * 
  * 2. ROTAS
  *    - /produtos: CRUD de produtos
- *    - /orders: Gerenciamento de pedidos
+ *    - /pedidos: Gerenciamento de pedidos
  *    - /: Health check
  * 
  * 3. TRATAMENTO DE ERROS

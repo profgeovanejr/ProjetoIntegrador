@@ -29,18 +29,18 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`\n📍 Servidor rodando em: http://${HOST}:${PORT}`);
   console.log(`\n🔗 Endpoints disponíveis:\n`);
   console.log(`  PRODUTOS:`);
-  console.log(`    POST   /products              - Criar produto`);
-  console.log(`    GET    /products              - Listar produtos`);
-  console.log(`    GET    /products/:id          - Detalhar produto`);
-  console.log(`    PUT    /products/:id          - Atualizar produto`);
-  console.log(`    PATCH  /products/:id/active   - Ativar/desativar`);
-  console.log(`    PATCH  /products/:id/stock    - Ajustar estoque`);
-  console.log(`    DELETE /products/:id          - Deletar produto`);
+  console.log(`    POST   /produtos              - Criar produto`);
+  console.log(`    GET    /produtos              - Listar produtos`);
+  console.log(`    GET    /produtos/:id          - Detalhar produto`);
+  console.log(`    PUT    /produtos/:id          - Atualizar produto`);
+  console.log(`    PATCH  /produtos/:id/ativo    - Ativar/desativar`);
+  console.log(`    PATCH  /produtos/:id/estoque  - Ajustar estoque`);
+  console.log(`    DELETE /produtos/:id          - Deletar produto`);
   console.log(`\n  PEDIDOS:`);
-  console.log(`    POST   /orders                - Criar pedido`);
-  console.log(`    GET    /orders                - Listar pedidos`);
-  console.log(`    GET    /orders/:id            - Detalhar pedido`);
-  console.log(`    PATCH  /orders/:id/status     - Alterar status`);
+  console.log(`    POST   /pedidos                - Criar pedido`);
+  console.log(`    GET    /pedidos                - Listar pedidos`);
+  console.log(`    GET    /pedidos/:id            - Detalhar pedido`);
+  console.log(`    PATCH  /pedidos/:id/status     - Alterar status`);
   console.log(`\n  SAÚDE:`);
   console.log(`    GET    /                      - Health check`);
   console.log(`\n💡 Dica: Use Postman ou Insomnia para testar os endpoints!\n`);
@@ -76,7 +76,7 @@ process.on('SIGINT', () => {
  *    node server.js
  * 
  * 3. Testar endpoints:
- *    - Abrir Postman
+ *    - Abrir Postman ou utilizar plugin Thunder Client no VSCode
  *    - Criar requisições para http://localhost:3000
  *    - Exemplos nos comentários acima
  * 
