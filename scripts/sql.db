@@ -1,0 +1,29 @@
+# Script criação da tabela produtos
+
+CREATE TABLE produtos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(120) NOT NULL,
+  descricao TEXT,
+  valor_unitario DECIMAL(10,2) NOT NULL
+        CHECK (valor_unitario > 0),
+  quantidade_estoque INTEGER DEFAULT 0
+        CHECK (quantidade_estoque >= 0),
+  ativo BOOLEAN DEFAULT true,
+  data_criacao TIMESTAMP DEFAULT NOW(),
+  data_atualizacao TIMESTAMP DEFAULT NOW()
+);
+
+# Script inserção de registros na tabela produtos
+
+INSERT INTO produtos
+  (nome, descricao, valor_unitario, quantidade_estoque)
+VALUES
+  ('Mouse Gamer RGB',
+   'Mouse 7 botões e iluminação RGB', 149.90, 25),
+  ('Teclado Mecânico Red',
+   'Switch linear', 349.00, 10),
+  ('Headset 7.1 Surround',
+   'Fone surround + mic retrátil', 279.90, 15),
+  ('Monitor 24" FHD',
+   'IPS 144Hz entrada HDMI', 1299.00, 8);
+
