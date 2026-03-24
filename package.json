@@ -1,7 +1,7 @@
 {
   "name": "projetointegrador",
   "version": "1.0.0",
-  "description": "",
+  "description": "Projeto construído incrementalmente ao longo das aulas, integrando banco de dados MySQL, autenticação JWT e boas práticas de arquitetura em camadas.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0"
   }
 }

@@ -1,6 +1,9 @@
 # Dependências
 node_modules/
 
+# Teste de Conexão
+test-db.js
+
 # Variáveis de ambiente (NUNCA commitar!)
 .env
 .env.local

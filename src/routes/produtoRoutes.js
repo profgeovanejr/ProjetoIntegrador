@@ -1,18 +1,18 @@
-// src/routes/product.routes.js
+// src/routes/produtoRoutes.js
 
 const express = require('express');
+const router = express.Router();
 const ProdutoController = require('../controllers/produtoController');
 
-const router = express.Router();
-
-// POST /produtos - Criar produto
-router.post('/', ProdutoController.criaProduto);
-
+console.log(ProdutoController);
 // GET /produtos - Listar produtos
 router.get('/', ProdutoController.listaProduto);
 
 // GET /produtos/:id - Detalhar produto
-router.get('/:id', ProdutoController.buscaPorId);
+router.get('/:id', ProdutoController.buscaProdutoPorId);
+
+// POST /produtos - Criar produto
+router.post('/', ProdutoController.criaProduto);
 
 // PUT /produtos/:id - Atualizar produto completo
 router.put('/:id', ProdutoController.atualizaProduto);

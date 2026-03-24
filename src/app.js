@@ -5,6 +5,7 @@
  * Define rotas, middlewares e tratamento de erros
  */
 
+require('dotenv').config();
 const express = require('express');
 const app = express();
 
