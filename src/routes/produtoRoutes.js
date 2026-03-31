@@ -8,6 +8,9 @@ console.log(ProdutoController);
 // GET /produtos - Listar produtos
 router.get('/', ProdutoController.listaProduto);
 
+// GET /produtos - Listar produtos
+router.get('/ativo', ProdutoController.listaProdutoAtivo);
+
 // GET /produtos/:id - Detalhar produto
 router.get('/:id', ProdutoController.buscaProdutoPorId);
 

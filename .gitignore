@@ -5,9 +5,9 @@ node_modules/
 test-db.js
 
 # Variáveis de ambiente (NUNCA commitar!)
-.env
-.env.local
-.env.production
+#.env
+#.env.local
+#.env.production
 
 # Logs
 *.log
