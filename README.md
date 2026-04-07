@@ -30,12 +30,16 @@ API REST desenvolvida em Node.js + Express para gestão de um e-commerce, com su
 ecommerce-api/
 ├── src/
 │   ├── config/
-│   │   └── database.js          # Conexão com MySQL (pool)
+│   │   └── database.js          # Conexão com MySQL (pool) (mantido, porém não mais utilizado)
+│   │   └── sequelize.js         # instancia do Sequelize 
 │   ├── controllers/
 │   │   ├── produtoController.js # Lógica dos endpoints de produtos
+│   ├── models/
+│   │   ├── Produto.js           # Model mapeado da entidade produtos
 │   │   └── pedidoController.js  # Lógica dos endpoints de pedidos
 │   ├── routes/
 │   │   ├── produtoRoutes.js     # Rotas de produtos
+│   │   │                        # Atualizado: usa Sequelize
 │   │   └── pedidoRoutes.js      # Rotas de pedidos
 │   └── app.js                   # Configuração Express + middlewares
 ├── .gitignore
@@ -123,6 +127,7 @@ Acesse: `http://localhost:3000`
 | POST | `/produtos` | Criar produto | ✅ |
 | GET | `/produtos` | Listar produtos | ✅ |
 | GET | `/produtos/:id` | Detalhar produto | ✅ |
+| GET | `/produtos/ativo` | Listar somente produtos ativos | ✅ |
 | PUT | `/produtos/:id` | Atualizar produto completo | ✅ |
 | PATCH | `/produtos/:id/ativo` | Ativar / desativar produto | ✅ |
 | PATCH | `/produtos/:id/estoque` | Ajustar estoque | ✅ |

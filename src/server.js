@@ -31,6 +31,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`  PRODUTOS:`);
   console.log(`    POST   /produtos              - Criar produto`);
   console.log(`    GET    /produtos              - Listar produtos`);
+  console.log(`    GET    /produtos/ativo        - Listar produtos ativos`);
   console.log(`    GET    /produtos/:id          - Detalhar produto`);
   console.log(`    PUT    /produtos/:id          - Atualizar produto`);
   console.log(`    PATCH  /produtos/:id/ativo    - Ativar/desativar`);
@@ -43,7 +44,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`    PATCH  /pedidos/:id/status     - Alterar status`);
   console.log(`\n  SAÚDE:`);
   console.log(`    GET    /                      - Health check`);
-  console.log(`\n💡 Dica: Use Postman ou Insomnia para testar os endpoints!\n`);
+  console.log(`\n💡 Dica: Use Postman, Insomnia ou Thunder Client (VSCode) para testar os endpoints!\n`);
 });
 
 // ============================================

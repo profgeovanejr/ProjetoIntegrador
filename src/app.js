@@ -7,6 +7,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const sequelize = require('./config/sequelize');
 const app = express();
 
 // ============================================
@@ -15,6 +16,12 @@ const app = express();
 
 // Parser JSON
 app.use(express.json());
+
+// Testar conexão com o banco de dados (podemos remover depois)
+sequelize
+  .authenticate()
+  .then(() => console.log('Conexão com o banco de dados estabelecida com sucesso.'))
+  .catch((err) => console.error('Não foi possível conectar ao banco de dados:', err));
 
 // Parser URL-encoded
 app.use(express.urlencoded({ extended: true }));
