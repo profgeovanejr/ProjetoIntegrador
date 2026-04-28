@@ -21,458 +21,483 @@
  *   ]
  * }
  */
-exports.criaPedido = (req, res) => {
-  try {
-    const { items } = req.body;
-    // Em produção, viria do middleware de autenticação
-    const userId = req.user?.id || 1;
 
-    // ============================================
-    // VALIDAÇÕES
-    // ============================================
+async function listarPedido(req, res) {
+  return res.status(200).json({
+    message: 'Listar pedidos - Em construção'
+  });
+}
 
-    // Validar items
-    if (!items || !Array.isArray(items)) {
-      return res.status(400).json({
-        message: 'Validação falhou',
-        errors: ['Campo "items" deve ser um array']
-      });
-    }
+async function buscarPedidoPorId(req, res) {
+  return res.status(200).json({
+    message: 'Buscar pedido por ID - Em construção'
+  });
+}
 
-    if (items.length === 0) {
-      return res.status(400).json({
-        message: 'Validação falhou',
-        errors: ['Pedido deve ter pelo menos um item']
-      });
-    }
+async function criarPedido(req, res) {
+  return res.status(201).json({
+    message: 'Criar pedido - Em construção'
+  });
+}
 
-    // Validar cada item
-    const errors = [];
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
+module.exports = {
+  listarPedido,
+  buscarPedidoPorId,
+  criarPedido
+}
 
-      if (!item.produtoId) {
-        errors.push(`Item ${i + 1}: produtoId é obrigatório`);
-      }
+// exports.criarPedido = (req, res) => {
+//   try {
+//     const { items } = req.body;
+//     // Em produção, viria do middleware de autenticação
+//     const userId = req.user?.id || 1;
 
-      if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
-        errors.push(`Item ${i + 1}: quantity deve ser um número inteiro maior que 0`);
-      }
-    }
+//     // ============================================
+//     // VALIDAÇÕES
+//     // ============================================
 
-    if (errors.length > 0) {
-      return res.status(400).json({
-        message: 'Validação falhou',
-        errors
-      });
-    }
+//     // Validar items
+//     if (!items || !Array.isArray(items)) {
+//       return res.status(400).json({
+//         message: 'Validação falhou',
+//         errors: ['Campo "items" deve ser um array']
+//       });
+//     }
 
-    // ============================================
-    // VALIDAR ESTOQUE (simulado)
-    // ============================================
-    // Em produção, verificaríamos o banco de dados
+//     if (items.length === 0) {
+//       return res.status(400).json({
+//         message: 'Validação falhou',
+//         errors: ['Pedido deve ter pelo menos um item']
+//       });
+//     }
 
-    // Simular verificação de estoque
-    const stockCheck = [
-      { produtoId: 1, available: 10 },
-      { produtoId: 2, available: 5 },
-      { produtoId: 3, available: 0 }
-    ];
+//     // Validar cada item
+//     const errors = [];
+//     for (let i = 0; i < items.length; i++) {
+//       const item = items[i];
 
-    for (let item of items) {
-      const stock = stockCheck.find(s => s.produtoId === item.produtoId);
+//       if (!item.produtoId) {
+//         errors.push(`Item ${i + 1}: produtoId é obrigatório`);
+//       }
 
-      if (!stock) {
-        return res.status(404).json({
-          message: 'Produto não encontrado',
-          produtoId: item.produtoId
-        });
-      }
+//       if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+//         errors.push(`Item ${i + 1}: quantity deve ser um número inteiro maior que 0`);
+//       }
+//     }
 
-      if (stock.available < item.quantity) {
-        // Status 409: Conflict (conflito de negócio)
-        return res.status(409).json({
-          message: 'Estoque insuficiente',
-          produtoId: item.produtoId,
-          requested: item.quantity,
-          available: stock.available
-        });
-      }
-    }
+//     if (errors.length > 0) {
+//       return res.status(400).json({
+//         message: 'Validação falhou',
+//         errors
+//       });
+//     }
 
-    // ============================================
-    // CALCULAR TOTAL (simulado)
-    // ============================================
+//     // ============================================
+//     // VALIDAR ESTOQUE (simulado)
+//     // ============================================
+//     // Em produção, verificaríamos o banco de dados
 
-    const produtos = [
-      { id: 1, price: 2500.00 },
-      { id: 2, price: 50.00 },
-      { id: 3, price: 150.00 }
-    ];
+//     // Simular verificação de estoque
+//     const stockCheck = [
+//       { produtoId: 1, available: 10 },
+//       { produtoId: 2, available: 5 },
+//       { produtoId: 3, available: 0 }
+//     ];
 
-    let total = 0;
-    const itensPedido = items.map(item => {
-      const product = produtos.find(p => p.id === item.produtoId);
-      const subtotal = product.price * item.quantity;
-      total += subtotal;
+//     for (let item of items) {
+//       const stock = stockCheck.find(s => s.produtoId === item.produtoId);
 
-      return {
-        produtoId: item.produtoId,
-        quantity: item.quantity,
-        unitPrice: product.price,
-        subtotal
-      };
-    });
+//       if (!stock) {
+//         return res.status(404).json({
+//           message: 'Produto não encontrado',
+//           produtoId: item.produtoId
+//         });
+//       }
 
-    // ============================================
-    // CRIAR PEDIDO
-    // ============================================
+//       if (stock.available < item.quantity) {
+//         // Status 409: Conflict (conflito de negócio)
+//         return res.status(409).json({
+//           message: 'Estoque insuficiente',
+//           produtoId: item.produtoId,
+//           requested: item.quantity,
+//           available: stock.available
+//         });
+//       }
+//     }
 
-    const novoPedido = {
-      id: Math.floor(Math.random() * 100000),
-      userId,
-      items: itensPedido,
-      status: 'CREATED',
-      total,
-      data_criacao: new Date().toISOString(),
-      data_atualizacao: new Date().toISOString()
-    };
+//     // ============================================
+//     // CALCULAR TOTAL (simulado)
+//     // ============================================
 
-    // ============================================
-    // RESPOSTA COM STATUS 201 (CREATED)
-    // ============================================
+//     const produtos = [
+//       { id: 1, price: 2500.00 },
+//       { id: 2, price: 50.00 },
+//       { id: 3, price: 150.00 }
+//     ];
 
-    return res.status(201).json({
-      message: 'Pedido criado com sucesso',
-      pedido: novoPedido
+//     let total = 0;
+//     const itensPedido = items.map(item => {
+//       const product = produtos.find(p => p.id === item.produtoId);
+//       const subtotal = product.price * item.quantity;
+//       total += subtotal;
 
-    });
+//       return {
+//         produtoId: item.produtoId,
+//         quantity: item.quantity,
+//         unitPrice: product.price,
+//         subtotal
+//       };
+//     });
 
-  } catch (error) {
-    console.error('Erro ao criar pedido:', error);
-    return res.status(500).json({
-      message: 'Erro ao criar pedido',
-      error: error.message
-    });
-  }
-};
+//     // ============================================
+//     // CRIAR PEDIDO
+//     // ============================================
 
-/**
- * GET /pedidos
- * Listar pedidos
- * 
- * Comportamento:
- * - CUSTOMER: vê apenas seus pedidos
- * - ADMIN: vê todos os pedidos
- * 
- * Query parameters (opcionais):
- * - status=CREATED|PAID|SHIPPED|CANCELED
- * - page=1
- * - limit=20
- */
-exports.listaPedido = (req, res) => {
-  try {
-    const { status, page = 1, limit = 20 } = req.query;
-    // Em produção, viria do middleware de autenticação
-    const userId = req.user?.id || 1;
-    const userRole = req.user?.role || 'CUSTOMER';
+//     const novoPedido = {
+//       id: Math.floor(Math.random() * 100000),
+//       userId,
+//       items: itensPedido,
+//       status: 'CREATED',
+//       total,
+//       data_criacao: new Date().toISOString(),
+//       data_atualizacao: new Date().toISOString()
+//     };
 
-    // Simular lista de pedidos
-    let pedidos = [
-      {
-        id: 1,
-        userId: 1,
-        status: 'CREATED',
-        total: 2550.00,
-        data_criacao: new Date().toISOString()
-      },
-      {
-        id: 2,
-        userId: 1,
-        status: 'PAID',
-        total: 5100.00,
-        data_criacao: new Date().toISOString()
-      },
-      {
-        id: 3,
-        userId: 2,
-        status: 'SHIPPED',
-        total: 150.00,
-        data_criacao: new Date().toISOString()
-      }
-    ];
+//     // ============================================
+//     // RESPOSTA COM STATUS 201 (CREATED)
+//     // ============================================
 
-    // ============================================
-    // FILTRAR POR PERMISSÃO
-    // ============================================
+//     return res.status(201).json({
+//       message: 'Pedido criado com sucesso',
+//       pedido: novoPedido
 
-    if (userRole === 'CUSTOMER') {
-      // CUSTOMER só vê seus próprios pedidos
-      pedidos
- = pedidos
-.filter(o => o.userId === userId);
-    }
-    // ADMIN vê todos (sem filtro)
+//     });
 
-    // ============================================
-    // FILTRAR POR STATUS (se fornecido)
-    // ============================================
+//   } catch (error) {
+//     console.error('Erro ao criar pedido:', error);
+//     return res.status(500).json({
+//       message: 'Erro ao criar pedido',
+//       error: error.message
+//     });
+//   }
+// };
 
-    if (status) {
-      const validStatuses = ['CREATED', 'PAID', 'SHIPPED', 'CANCELED'];
+// /**
+//  * GET /pedidos
+//  * Listar pedidos
+//  * 
+//  * Comportamento:
+//  * - CUSTOMER: vê apenas seus pedidos
+//  * - ADMIN: vê todos os pedidos
+//  * 
+//  * Query parameters (opcionais):
+//  * - status=CREATED|PAID|SHIPPED|CANCELED
+//  * - page=1
+//  * - limit=20
+//  */
+// exports.listaPedido = (req, res) => {
+//   try {
+//     const { status, page = 1, limit = 20 } = req.query;
+//     // Em produção, viria do middleware de autenticação
+//     const userId = req.user?.id || 1;
+//     const userRole = req.user?.role || 'CUSTOMER';
 
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({
-          message: 'Status inválido',
-          validStatuses
-        });
-      }
+//     // Simular lista de pedidos
+//     let pedidos = [
+//       {
+//         id: 1,
+//         userId: 1,
+//         status: 'CREATED',
+//         total: 2550.00,
+//         data_criacao: new Date().toISOString()
+//       },
+//       {
+//         id: 2,
+//         userId: 1,
+//         status: 'PAID',
+//         total: 5100.00,
+//         data_criacao: new Date().toISOString()
+//       },
+//       {
+//         id: 3,
+//         userId: 2,
+//         status: 'SHIPPED',
+//         total: 150.00,
+//         data_criacao: new Date().toISOString()
+//       }
+//     ];
 
-      pedidos = pedidos.filter(o => o.status === status);
-    }
+//     // ============================================
+//     // FILTRAR POR PERMISSÃO
+//     // ============================================
 
-    // ============================================
-    // APLICAR PAGINAÇÃO
-    // ============================================
+//     if (userRole === 'CUSTOMER') {
+//       // CUSTOMER só vê seus próprios pedidos
+//       pedidos
+//  = pedidos
+// .filter(o => o.userId === userId);
+//     }
+//     // ADMIN vê todos (sem filtro)
 
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
-    const paginatedpedidos = pedidos.slice(startIndex, endIndex);
+//     // ============================================
+//     // FILTRAR POR STATUS (se fornecido)
+//     // ============================================
 
-    // ============================================
-    // RESPOSTA COM STATUS 200 (OK)
-    // ============================================
+//     if (status) {
+//       const validStatuses = ['CREATED', 'PAID', 'SHIPPED', 'CANCELED'];
 
-    return res.status(200).json({
-      message: 'Pedidos listados com sucesso',
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total: pedidos.length,
-        totalPages: Math.ceil(pedidos.length / limitNum)
-      },
-      pedidos: paginatedpedidos
+//       if (!validStatuses.includes(status)) {
+//         return res.status(400).json({
+//           message: 'Status inválido',
+//           validStatuses
+//         });
+//       }
 
-    });
+//       pedidos = pedidos.filter(o => o.status === status);
+//     }
 
-  } catch (error) {
-    console.error('Erro ao listar pedidos:', error);
-    return res.status(500).json({
-      message: 'Erro ao listar pedidos',
-      error: error.message
-    });
-  }
-};
+//     // ============================================
+//     // APLICAR PAGINAÇÃO
+//     // ============================================
 
-/**
- * GET /pedidos
- /:id
- * Detalhar um pedido específico
- * 
- * Regra:
- * - CUSTOMER: só vê se for dono
- * - ADMIN: vê qualquer um
- */
-exports.buscaPorId = (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user?.id || 1;
-    const userRole = req.user?.role || 'CUSTOMER';
+//     const pageNum = parseInt(page);
+//     const limitNum = parseInt(limit);
+//     const startIndex = (pageNum - 1) * limitNum;
+//     const endIndex = startIndex + limitNum;
+//     const paginatedpedidos = pedidos.slice(startIndex, endIndex);
 
-    // Validar ID
-    if (!id || isNaN(id)) {
-      return res.status(400).json({
-        message: 'ID do pedido inválido'
-      });
-    }
+//     // ============================================
+//     // RESPOSTA COM STATUS 200 (OK)
+//     // ============================================
 
-    // Simular busca
-    const pedido = {
-      id: parseInt(id),
-      userId: 1,
-      items: [
-        {
-          produtoId: 1,
-          quantity: 1,
-          unitPrice: 2500.00,
-          subtotal: 2500.00
-        }
-      ],
-      status: 'CREATED',
-      total: 2500.00,
-      data_criacao: new Date().toISOString(),
-      data_atualizacao: new Date().toISOString()
-    };
+//     return res.status(200).json({
+//       message: 'Pedidos listados com sucesso',
+//       pagination: {
+//         page: pageNum,
+//         limit: limitNum,
+//         total: pedidos.length,
+//         totalPages: Math.ceil(pedidos.length / limitNum)
+//       },
+//       pedidos: paginatedpedidos
 
-    // Simular pedido não encontrado
-    if (parseInt(id) === 999) {
-      return res.status(404).json({
-        message: 'Pedido não encontrado'
-      });
-    }
+//     });
 
-    // ============================================
-    // VERIFICAR PERMISSÃO
-    // ============================================
+//   } catch (error) {
+//     console.error('Erro ao listar pedidos:', error);
+//     return res.status(500).json({
+//       message: 'Erro ao listar pedidos',
+//       error: error.message
+//     });
+//   }
+// };
 
-    if (userRole === 'CUSTOMER' && pedido.userId !== userId) {
-      // Status 403: Forbidden (sem permissão)
-      return res.status(403).json({
-        message: 'Você não tem permissão para ver este pedido'
-      });
-    }
+// /**
+//  * GET /pedidos
+//  /:id
+//  * Detalhar um pedido específico
+//  * 
+//  * Regra:
+//  * - CUSTOMER: só vê se for dono
+//  * - ADMIN: vê qualquer um
+//  */
+// exports.buscaPorId = (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const userId = req.user?.id || 1;
+//     const userRole = req.user?.role || 'CUSTOMER';
 
-    // ============================================
-    // RESPOSTA COM STATUS 200 (OK)
-    // ============================================
+//     // Validar ID
+//     if (!id || isNaN(id)) {
+//       return res.status(400).json({
+//         message: 'ID do pedido inválido'
+//       });
+//     }
 
-    return res.status(200).json({
-      message: 'Pedido encontrado',
-      pedido
-    });
+//     // Simular busca
+//     const pedido = {
+//       id: parseInt(id),
+//       userId: 1,
+//       items: [
+//         {
+//           produtoId: 1,
+//           quantity: 1,
+//           unitPrice: 2500.00,
+//           subtotal: 2500.00
+//         }
+//       ],
+//       status: 'CREATED',
+//       total: 2500.00,
+//       data_criacao: new Date().toISOString(),
+//       data_atualizacao: new Date().toISOString()
+//     };
 
-  } catch (error) {
-    console.error('Erro ao buscar pedido:', error);
-    return res.status(500).json({
-      message: 'Erro ao buscar pedido',
-      error: error.message
-    });
-  }
-};
+//     // Simular pedido não encontrado
+//     if (parseInt(id) === 999) {
+//       return res.status(404).json({
+//         message: 'Pedido não encontrado'
+//       });
+//     }
 
-/**
- * PATCH /pedidos
- /:id/status
- * Alterar status do pedido
- * 
- * Body esperado:
- * {
- *   "status": "PAID" ou "SHIPPED" ou "CANCELED"
- * }
- * 
- * Regras:
- * - ADMIN: pode alterar para qualquer status válido
- * - CUSTOMER: só pode cancelar se status for CREATED
- */
-exports.atualizaPedidoStatus = (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-    const userId = req.user?.id || 1;
-    const userRole = req.user?.role || 'CUSTOMER';
+//     // ============================================
+//     // VERIFICAR PERMISSÃO
+//     // ============================================
 
-    // Validar ID
-    if (!id || isNaN(id)) {
-      return res.status(400).json({
-        message: 'ID do pedido inválido'
-      });
-    }
+//     if (userRole === 'CUSTOMER' && pedido.userId !== userId) {
+//       // Status 403: Forbidden (sem permissão)
+//       return res.status(403).json({
+//         message: 'Você não tem permissão para ver este pedido'
+//       });
+//     }
 
-    // Validar status
-    const validStatuses = ['CREATED', 'PAID', 'SHIPPED', 'CANCELED'];
+//     // ============================================
+//     // RESPOSTA COM STATUS 200 (OK)
+//     // ============================================
 
-    if (!status || !validStatuses.includes(status)) {
-      return res.status(400).json({
-        message: 'Validação falhou',
-        errors: [`Status deve ser um de: ${validStatuses.join(', ')}`]
-      });
-    }
+//     return res.status(200).json({
+//       message: 'Pedido encontrado',
+//       pedido
+//     });
 
-    // Simular busca do pedido
-    const pedido = {
-      id: parseInt(id),
-      userId: 1,
-      status: 'CREATED',
-      total: 2500.00
-    };
+//   } catch (error) {
+//     console.error('Erro ao buscar pedido:', error);
+//     return res.status(500).json({
+//       message: 'Erro ao buscar pedido',
+//       error: error.message
+//     });
+//   }
+// };
 
-    // Simular pedido não encontrado
-    if (parseInt(id) === 999) {
-      return res.status(404).json({
-        message: 'Pedido não encontrado'
-      });
-    }
+// /**
+//  * PATCH /pedidos
+//  /:id/status
+//  * Alterar status do pedido
+//  * 
+//  * Body esperado:
+//  * {
+//  *   "status": "PAID" ou "SHIPPED" ou "CANCELED"
+//  * }
+//  * 
+//  * Regras:
+//  * - ADMIN: pode alterar para qualquer status válido
+//  * - CUSTOMER: só pode cancelar se status for CREATED
+//  */
+// exports.atualizaPedidoStatus = (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { status } = req.body;
+//     const userId = req.user?.id || 1;
+//     const userRole = req.user?.role || 'CUSTOMER';
 
-    // ============================================
-    // VERIFICAR PERMISSÃO
-    // ============================================
+//     // Validar ID
+//     if (!id || isNaN(id)) {
+//       return res.status(400).json({
+//         message: 'ID do pedido inválido'
+//       });
+//     }
 
-    if (userRole === 'CUSTOMER') {
-      // CUSTOMER só pode cancelar
-      if (status !== 'CANCELED') {
-        return res.status(403).json({
-          message: 'Você só pode cancelar pedidos'
-        });
-      }
+//     // Validar status
+//     const validStatuses = ['CREATED', 'PAID', 'SHIPPED', 'CANCELED'];
 
-      // CUSTOMER só pode cancelar se status for CREATED
-      if (pedido.status !== 'CREATED') {
-        return res.status(409).json({
-          message: 'Só é possível cancelar pedidos em status CREATED',
-          currentStatus: pedido.status
-        });
-      }
-    }
+//     if (!status || !validStatuses.includes(status)) {
+//       return res.status(400).json({
+//         message: 'Validação falhou',
+//         errors: [`Status deve ser um de: ${validStatuses.join(', ')}`]
+//       });
+//     }
 
-    // ============================================
-    // VALIDAR TRANSIÇÃO DE STATUS
-    // ============================================
+//     // Simular busca do pedido
+//     const pedido = {
+//       id: parseInt(id),
+//       userId: 1,
+//       status: 'CREATED',
+//       total: 2500.00
+//     };
 
-    // Não permitir alterar pedido CANCELED
-    if (pedido.status === 'CANCELED') {
-      return res.status(409).json({
-        message: 'Não é possível alterar pedido cancelado'
-      });
-    }
+//     // Simular pedido não encontrado
+//     if (parseInt(id) === 999) {
+//       return res.status(404).json({
+//         message: 'Pedido não encontrado'
+//       });
+//     }
 
-    // Validar transições válidas (ADMIN)
-    if (userRole === 'ADMIN') {
-      const validTransitions = {
-        'CREATED': ['PAID', 'CANCELED'],
-        'PAID': ['SHIPPED', 'CANCELED'],
-        'SHIPPED': [],
-        'CANCELED': []
-      };
+//     // ============================================
+//     // VERIFICAR PERMISSÃO
+//     // ============================================
 
-      const allowed = validTransitions[pedido.status];
-      if (!allowed.includes(status)) {
-        return res.status(409).json({
-          message: `Transição inválida de ${pedido.status} para ${status}`,
-          currentStatus: pedido.status,
-          validTransitions: allowed
-        });
-      }
-    }
+//     if (userRole === 'CUSTOMER') {
+//       // CUSTOMER só pode cancelar
+//       if (status !== 'CANCELED') {
+//         return res.status(403).json({
+//           message: 'Você só pode cancelar pedidos'
+//         });
+//       }
 
-    // ============================================
-    // ATUALIZAR STATUS
-    // ============================================
+//       // CUSTOMER só pode cancelar se status for CREATED
+//       if (pedido.status !== 'CREATED') {
+//         return res.status(409).json({
+//           message: 'Só é possível cancelar pedidos em status CREATED',
+//           currentStatus: pedido.status
+//         });
+//       }
+//     }
 
-    const atualizaPedido = {
-      id: parseInt(id),
-      status,
-      data_atualizacao: new Date().toISOString()
-    };
+//     // ============================================
+//     // VALIDAR TRANSIÇÃO DE STATUS
+//     // ============================================
 
-    // ============================================
-    // RESPOSTA COM STATUS 200 (OK)
-    // ============================================
+//     // Não permitir alterar pedido CANCELED
+//     if (pedido.status === 'CANCELED') {
+//       return res.status(409).json({
+//         message: 'Não é possível alterar pedido cancelado'
+//       });
+//     }
 
-    return res.status(200).json({
-      message: 'Status do pedido atualizado com sucesso',
-      pedido: atualizaPedido
-    });
+//     // Validar transições válidas (ADMIN)
+//     if (userRole === 'ADMIN') {
+//       const validTransitions = {
+//         'CREATED': ['PAID', 'CANCELED'],
+//         'PAID': ['SHIPPED', 'CANCELED'],
+//         'SHIPPED': [],
+//         'CANCELED': []
+//       };
 
-  } catch (error) {
-    console.error('Erro ao atualizar status do pedido:', error);
-    return res.status(500).json({
-      message: 'Erro ao atualizar status do pedido',
-      error: error.message
-    });
-  }
-};
+//       const allowed = validTransitions[pedido.status];
+//       if (!allowed.includes(status)) {
+//         return res.status(409).json({
+//           message: `Transição inválida de ${pedido.status} para ${status}`,
+//           currentStatus: pedido.status,
+//           validTransitions: allowed
+//         });
+//       }
+//     }
+
+//     // ============================================
+//     // ATUALIZAR STATUS
+//     // ============================================
+
+//     const atualizaPedido = {
+//       id: parseInt(id),
+//       status,
+//       data_atualizacao: new Date().toISOString()
+//     };
+
+//     // ============================================
+//     // RESPOSTA COM STATUS 200 (OK)
+//     // ============================================
+
+//     return res.status(200).json({
+//       message: 'Status do pedido atualizado com sucesso',
+//       pedido: atualizaPedido
+//     });
+
+//   } catch (error) {
+//     console.error('Erro ao atualizar status do pedido:', error);
+//     return res.status(500).json({
+//       message: 'Erro ao atualizar status do pedido',
+//       error: error.message
+//     });
+//   }
+// };
 
 /**
  * RESUMO DE CONCEITOS:

@@ -33,6 +33,11 @@ app.use((req, res, next) => {
 });
 
 // ============================================
+// ASSOCIACOES - Carregar as associações antes das rotas
+// ============================================
+require('./models/Associacao'); 
+
+// ============================================
 // ROTAS
 // ============================================
 
@@ -45,23 +50,10 @@ const pedidoController = require('./controllers/pedidoController');
 // ============================================
 // ✅ Usar o arquivo de rotas
 const produtoRoutes = require('./routes/produtoRoutes');
+const pedidoRoutes = require('./routes/pedidoRoutes');
+
 app.use('/produtos', produtoRoutes);
-
-// ============================================
-// ROTAS DE PEDIDOS
-// ============================================
-
-// POST /pedidos - Criar pedido
-app.post('/pedidos', pedidoController.criaPedido);
-
-// GET /pedidos - listaProdutoar pedidos
-app.get('/pedidos', pedidoController.listaPedido);
-
-// GET /pedidos/:id - Detalhar pedido
-app.get('/pedidos/:id', pedidoController.buscaPorId);
-
-// PATCH /pedidos/:id/status - Alterar status do pedido
-app.patch('/pedidos/:id/status', pedidoController.atualizaPedidoStatus);
+app.use('/pedidos', pedidoRoutes);
 
 // ============================================
 // ROTAS DE SAÚDE

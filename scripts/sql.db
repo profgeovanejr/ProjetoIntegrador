@@ -27,3 +27,55 @@ VALUES
   ('Monitor 24" FHD',
    'IPS 144Hz entrada HDMI', 1299.00, 8);
 
+# Script criação da tabela pedidos
+
+CREATE TABLE pedidos (
+  id               INT AUTO_INCREMENT PRIMARY KEY,
+  nome_cliente     VARCHAR(120) NOT NULL, #Esta coluna é temporária, será trocada futuramente pelo id do cliente
+  status           ENUM(
+                     'pendente',
+                     'confirmado',
+                     'enviado',
+                     'entregue',
+                     'cancelado'
+                   ) DEFAULT 'pendente',
+  data_criacao     TIMESTAMP DEFAULT NOW(),
+  data_atualizacao TIMESTAMP DEFAULT NOW()
+    ON UPDATE NOW()
+);
+
+# Script criação da tabela itens_pedido
+
+CREATE TABLE itens_pedido (
+  id               INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id        INT NOT NULL,
+  produto_id       INT NOT NULL,
+  quantidade       INT NOT NULL CHECK (quantidade > 0),
+  valor_unitario   DECIMAL(10,2) NOT NULL CHECK (valor_unitario > 0),
+
+  FOREIGN KEY (pedido_id)
+    REFERENCES pedidos(id)
+    ON DELETE CASCADE,
+
+  FOREIGN KEY (produto_id)
+    REFERENCES produtos(id)
+    ON DELETE RESTRICT
+);
+
+-- Inserir pedidos
+INSERT INTO pedidos (nome_cliente, status) VALUES
+  ('Ana Lima', 'confirmado'),
+  ('Carlos Mendes', 'pendente');
+  
+-- Inserir itens do pedido 1
+INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, valor_unitario)
+VALUES
+  (1, 1, 2, 149.90),
+  (1, 2, 1, 289.90);
+  
+-- Inserir item do pedido 2
+INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, valor_unitario)
+VALUES
+  (2, 3, 1, 199.90),
+  (2, 5, 3, 300),
+  (2, 6, 2, 100);

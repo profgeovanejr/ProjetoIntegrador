@@ -2,7 +2,7 @@
 node_modules/
 
 # Teste de Conexão
-test-db.js
+#test-db.js
 
 # Variáveis de ambiente (NUNCA commitar!)
 #.env
