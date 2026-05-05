@@ -22,22 +22,125 @@
  * }
  */
 
+// src/controllers/pedidoController.js
+const sequelize = require('../config/sequelize');
+
+const Pedido = require('../models/Pedido');
+const ItemPedido = require('../models/ItemPedido');
+const Produto = require('../models/Produto');
+
+// GET /pedidos - lista todos os pedidos com valor total calculado
 async function listarPedido(req, res) {
-  return res.status(200).json({
-    message: 'Listar pedidos - Em construção'
+
+  const pedidos = await Pedido.findAll({
+    include: [{
+      association: 'itens',
+      atributes: ['quantidade', 'valor_unitario'],
+    }]
   });
+  const resultado = pedidos.map(pedido => {
+    const valorTotal = pedido.itens.reduce((soma, item) => {
+      return soma + (item.quantidade * parseFloat(item.valor_unitario));
+    }, 0);
+    return {
+      id: pedido.id,
+      nome_cliente: pedido.nome_cliente,
+      status: pedido.status,
+      data_criacao: pedido.data_criacao,
+      total_itens: pedido.itens.length,
+      valor_total: parseFloat(valorTotal).toFixed(2)
+    };
+  });
+  return res.status(200).json({ resultado });
 }
 
+// GET /pedidos/:id - consulta pedido específico com detalhes e valor total
 async function buscarPedidoPorId(req, res) {
+  const pedido = await Pedido.findByPk(req.params.id, {
+    include: [{
+      association: 'itens',
+      include: [{
+        association: 'produto',
+        attributes: ['id', 'nome', 'valorUnitario']
+      }]
+    }]
+  });
+
+  if (!pedido) {
+    return res.status(404).json({ message: 'Pedido não encontrado' });
+  }
+
+  const valorTotal = pedido.itens.reduce(
+    (soma, item) => soma + (item.quantidade * parseFloat(item.valor_unitario)),
+    0
+  );
+
   return res.status(200).json({
-    message: 'Buscar pedido por ID - Em construção'
+    ...pedido.toJSON(),
+    valor_total: valorTotal.toFixed(2)
   });
 }
 
+// POST /pedidos - criar novo pedido com validação de estoque e transação
 async function criarPedido(req, res) {
-  return res.status(201).json({
-    message: 'Criar pedido - Em construção'
-  });
+  const { nome_cliente, itens } = req.body;
+
+  if (!nome_cliente || !Array.isArray(itens) || itens.length === 0) {
+    return res.status(400).json({ mensagem: 'Dados inválidos' });
+  }
+
+  const transacao = await sequelize.transaction();
+
+  try {
+    const pedido = await Pedido.create(
+      { nome_cliente, status: 'pendente' },
+      { transaction: transacao }
+    );
+
+    for (const item of itens) {
+      const produto = await Produto.findByPk(item.produto_id, {
+        transaction: transacao
+      });
+
+      if (!produto) {
+        await transacao.rollback();
+        return res.status(404).json(
+          { mensagem: `Produto ${item.produto_id} inexistente` }
+        );
+      }
+
+      if (produto.quantidadeEstoque < item.quantidade) {
+        await transacao.rollback();
+        return res.status(409).json({
+          mensagem: `Estoque insuficiente para ${produto.nome}`,
+          estoque_disponivel: produto.quantidadeEstoque
+        });
+      }
+
+      await ItemPedido.create({
+        pedido_id: pedido.id,
+        produto_id: produto.id,
+        quantidade: item.quantidade,
+        valor_unitario: produto.valorUnitario
+      }, { transaction: transacao });
+
+      await produto.decrement('quantidadeEstoque', {
+        by: item.quantidade,
+        transaction: transacao
+      });
+    }
+
+    await transacao.commit();
+
+    return res.status(201).json({
+      mensagem: 'Pedido criado com sucesso',
+      pedido_id: pedido.id
+    });
+
+  } catch (e) {
+    await transacao.rollback();
+    return res.status(500).json({ erro: e.message });
+  }
 }
 
 module.exports = {
@@ -185,11 +288,11 @@ module.exports = {
 // /**
 //  * GET /pedidos
 //  * Listar pedidos
-//  * 
+//  *
 //  * Comportamento:
 //  * - CUSTOMER: vê apenas seus pedidos
 //  * - ADMIN: vê todos os pedidos
-//  * 
+//  *
 //  * Query parameters (opcionais):
 //  * - status=CREATED|PAID|SHIPPED|CANCELED
 //  * - page=1
@@ -295,7 +398,7 @@ module.exports = {
 //  * GET /pedidos
 //  /:id
 //  * Detalhar um pedido específico
-//  * 
+//  *
 //  * Regra:
 //  * - CUSTOMER: só vê se for dono
 //  * - ADMIN: vê qualquer um
@@ -371,12 +474,12 @@ module.exports = {
 //  * PATCH /pedidos
 //  /:id/status
 //  * Alterar status do pedido
-//  * 
+//  *
 //  * Body esperado:
 //  * {
 //  *   "status": "PAID" ou "SHIPPED" ou "CANCELED"
 //  * }
-//  * 
+//  *
 //  * Regras:
 //  * - ADMIN: pode alterar para qualquer status válido
 //  * - CUSTOMER: só pode cancelar se status for CREATED
