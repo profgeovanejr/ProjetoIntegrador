@@ -51,9 +51,11 @@ const pedidoController = require('./controllers/pedidoController');
 // ✅ Usar o arquivo de rotas
 const produtoRoutes = require('./routes/produtoRoutes');
 const pedidoRoutes = require('./routes/pedidoRoutes');
+const usuarioRoutes = require('./routes/usuarioRoutes');
 
 app.use('/produtos', produtoRoutes);
 app.use('/pedidos', pedidoRoutes);
+app.use('/auth', usuarioRoutes);
 
 // ============================================
 // ROTAS DE SAÚDE

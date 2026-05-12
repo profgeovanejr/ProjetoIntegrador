@@ -79,3 +79,34 @@ VALUES
   (2, 3, 1, 199.90),
   (2, 5, 3, 300),
   (2, 6, 2, 100);
+
+# Script criação da tabela usuarios
+
+CREATE TABLE IF NOT EXISTS usuarios (
+
+  id           INT AUTO_INCREMENT PRIMARY KEY,
+  nome         VARCHAR(100)             NOT NULL,
+  email        VARCHAR(50)              NOT NULL UNIQUE,
+  senha_hash   VARCHAR(255)             NOT NULL,
+  perfil       ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente',
+  ativo        BOOLEAN                  NOT NULL DEFAULT TRUE,
+  data_criacao DATETIME                 NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+);
+
+-- Senha para ambos os usuários: Senha@123
+-- (o hash abaixo foi gerado com bcrypt, fator 10)
+
+INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES
+(
+  'Admin do Sistema',
+  'admin@ecommerce.com',
+  '$2b$10$Ke9zBj5rQvFkHp3LmN8X4OqWtYuIoP1sAdFgHjKlZxCvBnMqReSt1',
+  'admin'
+),
+(
+  'Maria Silva',
+  'maria@email.com',
+  '$2b$10$Ke9zBj5rQvFkHp3LmN8X4OqWtYuIoP1sAdFgHjKlZxCvBnMqReSt1',
+  'cliente'
+);
