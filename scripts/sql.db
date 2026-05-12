@@ -101,12 +101,12 @@ INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES
 (
   'Admin do Sistema',
   'admin@ecommerce.com',
-  '$2b$10$Ke9zBj5rQvFkHp3LmN8X4OqWtYuIoP1sAdFgHjKlZxCvBnMqReSt1',
+  '$2b$10$9YqbIeoiv3JaR/KdZ4KEhOBcN7tedCdD/yJsgWmKPkliR7PZ2jnlu',
   'admin'
 ),
 (
   'Maria Silva',
   'maria@email.com',
-  '$2b$10$Ke9zBj5rQvFkHp3LmN8X4OqWtYuIoP1sAdFgHjKlZxCvBnMqReSt1',
+  '$2b$10$9YqbIeoiv3JaR/KdZ4KEhOBcN7tedCdD/yJsgWmKPkliR7PZ2jnlu',
   'cliente'
 );
