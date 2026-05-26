@@ -9,6 +9,8 @@ require('dotenv').config();
 const express = require('express');
 const sequelize = require('./config/sequelize');
 const app = express();
+const swaggerUi  = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swaggerOptions');
 
 // ============================================
 // MIDDLEWARES GLOBAIS
@@ -36,6 +38,11 @@ app.use((req, res, next) => {
 // ASSOCIACOES - Carregar as associações antes das rotas
 // ============================================
 require('./models/Associacao'); 
+
+// ============================================
+// DOCUMENTAÇÃO COM SWAGGER
+// ============================================
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ============================================
 // ROTAS

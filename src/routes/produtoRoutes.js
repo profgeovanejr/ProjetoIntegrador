@@ -9,12 +9,44 @@ const autorizar = require('../middlewares/autorizarMiddleware');
 // Rotas públicas (sem autenticação)
 
 // GET /produtos - Listar produtos
+/**
+ * @swagger
+ * /produtos:
+ *   get:
+ *     tags: [Produto]
+ *     summary: Lista todos os produtos
+ *     responses:
+ *       200:
+ *         description: Array de produtos
+ *       500:
+ *         description: Erro interno do servidor
+ */
+
 router.get('/', ProdutoController.listaProduto);
 
 // GET /produtos - Listar produtos ativos
 router.get('/ativo', ProdutoController.listaProdutoAtivo);
 
 // GET /produtos/:id - Detalhar produto
+/**
+ * @swagger
+ * /produtos/{id}:
+ *   get:
+ *     tags: [Produto]
+ *     summary: Busca produto por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Produto encontrado
+ *       404:
+ *         description: Produto nao encontrado
+ */
+
 router.get('/:id', ProdutoController.buscaProdutoPorId);
 
 // Rotas protegidas (com autenticação)
